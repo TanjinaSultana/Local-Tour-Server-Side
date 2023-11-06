@@ -44,7 +44,7 @@ async function run() {
         const newService = req.body;
         console.log(newService);
        
-        const result = await userCollection.insertOne(newService);
+        //const result = await userCollection.insertOne(newService);
         res.send(result)
     })
     app.get('/userService', async(req,res) =>{
