@@ -26,18 +26,32 @@ async function run() {
     //await client.connect();
     const database = client.db("productDB");
     const serviceCollection = database.collection("product");
+    const databaseUser = client.db("userDB");
+    const userCollection = databaseUser.collection("user");
     app.get('/service', async(req,res) =>{
         const cursor = serviceCollection.find();
         const result = await cursor.toArray();
         res.send(result);
     })
-app.post('/service',async(req,res) =>{
-    const newProduct = req.body;
-    console.log(newProduct);
-   
-    const result = await serviceCollection.insertOne(newProduct);
-    res.send(result)
-})
+    app.post('/service',async(req,res) =>{
+        const newProduct = req.body;
+        console.log(newProduct);
+       
+        const result = await serviceCollection.insertOne(newProduct);
+        res.send(result)
+    })
+    app.post('/userService',async(req,res) =>{
+        const newService = req.body;
+        console.log(newService);
+       
+        const result = await userCollection.insertOne(newService);
+        res.send(result)
+    })
+    app.get('/userService', async(req,res) =>{
+        const cursor = userCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    })
 
 app.delete('/service/:id',async(req,res) =>{
     const id = req.params.id;
