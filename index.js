@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require('cors')
-require('dotenv').config()
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+require('dotenv').config()
 const app = express()
 const port =process.env.PORT || 5000;
 
@@ -26,8 +27,17 @@ async function run() {
     //await client.connect();
     const database = client.db("productDB");
     const serviceCollection = database.collection("product");
-    const databaseUser = client.db("userDB");
-    const userCollection = databaseUser.collection("user");
+    const databaseUser = client.db("serviceDB");
+    const userCollection = databaseUser.collection("userService");
+
+
+app.post('/jwt',async(req,res) =>{
+  const user = req.body;
+  console.log(user);
+  const token = jwt.sign(user,"secret",{expiresIn: '1h'})
+  res.send(token)
+})
+
     app.get('/service', async(req,res) =>{
         const cursor = serviceCollection.find();
         const result = await cursor.toArray();
@@ -40,17 +50,24 @@ async function run() {
         const result = await serviceCollection.insertOne(newProduct);
         res.send(result)
     })
+    
+    app.get('/userService', async(req,res) =>{
+     
+      let query = {};
+      if(req.query?.userEmail){
+        query = { userEmail:req.query.userEmail }
+
+      }
+        const cursor = userCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result);
+    })
     app.post('/userService',async(req,res) =>{
         const newService = req.body;
         console.log(newService);
        
-        //const result = await userCollection.insertOne(newService);
+        const result = await userCollection.insertOne(newService);
         res.send(result)
-    })
-    app.get('/userService', async(req,res) =>{
-        const cursor = userCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
     })
 
 app.delete('/service/:id',async(req,res) =>{
