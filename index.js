@@ -50,7 +50,7 @@ const logger = async =(req,res,next) =>{
   next();
 }
 const verifyToken = async (req, res, next) => {
-  const token = req.cookie?.token;
+  const token = req.cookies?.token;
   console.log(token);
   if (!token) {
     return res.status(401).send({ message: 'unauthorized' })
@@ -124,25 +124,15 @@ async function run() {
 
 
     //getting user services
-    app.get('/userService',logger,verifyToken,  async (req, res) => {
-      //  console.log('token is ',req.cookies.token);
-      //  console.log(req.user,"user ");
-      //  if(req.query.email !== req.user.email){
-
-      //    return res.status(403).send({message: "Forbidden Access"})
-      //  }
-      //   let query = {};
-      //   if(req.query?.email){
-      //     query = { email : req.query.email }
-      //   }
+    app.get('/userService',logger,verifyToken, async (req, res) => {
       
-      // console.log('user ', req.user);
-      // console.log('tok tok', req.cookies?.token);
-      // console.log(req.query.email);
+      console.log('user ', req.user);
+      console.log('tok tok', req.cookies?.token);
+      console.log(req.query.email);
 
-      // if (req.query.providerEmail !== req.user.providerEmail) {
-      //   return res.status(403).send({ message: 'forbidden access' })
-      // }
+      if (req.query.email !== req.user.email) {
+        return res.status(403).send({ message: 'forbidden access' })
+      }
       let query = {}
       if (req.query?.email) {
         query = { email: req.query.email }
